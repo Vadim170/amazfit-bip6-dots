@@ -27,9 +27,7 @@ export const WX = {
 export const ICON = { w9: 36 }
 export const ICON_SRC = {
   "heart": "images/icon/heart.png",
-  "foot": "images/icon/foot.png",
-  "drop": "images/icon/drop.png",
-  "delta": "images/icon/delta.png",
-  "heartSm": "images/icon/heart_sm.png"
+  "heartSm": "images/icon/heart_sm.png",
+  "pulse": "images/icon/pulse.png"
 }
 export const PREVIEW = 'images/preview.png'

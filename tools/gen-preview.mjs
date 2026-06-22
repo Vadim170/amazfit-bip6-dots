@@ -78,15 +78,13 @@ function render() {
   const w = L.WEATHER;
   place(A.WX[SAMPLE.weatherIcon], w.iconX, w.iconY);
   num(String(SAMPLE.tempHigh), A.NUMSM_WHITE, w.tempCx, w.tempY, A.NUMSM.w);
-  if (SAMPLE.rain) place(A.ICON_SRC.drop, w.dropX, w.dropY);
   const m = L.METRICS;
-  place(A.ICON_SRC.foot, m.steps.iconX, m.iconY);
-  numLeft(String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.numX, m.numY, A.NUMSM.w);
+  num(String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.centerX, m.numY, A.NUMSM.w);
   place(A.ICON_SRC.heart, m.hr.iconX, m.iconY);
   numLeft(String(SAMPLE.hr), A.NUMSM_RED, m.hr.numX, m.numY, A.NUMSM.w);
   const g = L.GRAPHS;
   place(A.ICON_SRC.heartSm, g.rhr.iconX, g.iconY); graph(g, g.rhr, SAMPLE.rhr);
-  place(A.ICON_SRC.delta, g.hrv.iconX, g.iconY); graph(g, g.hrv, SAMPLE.hrv);
+  place(A.ICON_SRC.pulse, g.hrv.iconX, g.iconY); graph(g, g.hrv, SAMPLE.hrv);
 }
 document.getElementById('toggle').onclick = () => { aod = !aod; render(); };
 render(); setInterval(render, 5000);

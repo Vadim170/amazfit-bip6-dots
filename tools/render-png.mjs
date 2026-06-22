@@ -92,18 +92,16 @@ function render(aod) {
   const w = L.WEATHER
   blit(cv, A.WX[SAMPLE.weatherIcon], w.iconX, w.iconY)
   placeNum(cv, String(SAMPLE.tempHigh), A.NUMSM_WHITE, w.tempCx, w.tempY, A.NUMSM.w)
-  if (SAMPLE.rain) blit(cv, A.ICON_SRC.drop, w.dropX, w.dropY)
 
   const m = L.METRICS
-  blit(cv, A.ICON_SRC.foot, m.steps.iconX, m.iconY)
-  placeNumLeft(cv, String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.numX, m.numY, A.NUMSM.w)
+  placeNum(cv, String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.centerX, m.numY, A.NUMSM.w)
   blit(cv, A.ICON_SRC.heart, m.hr.iconX, m.iconY)
   placeNumLeft(cv, String(SAMPLE.hr), A.NUMSM_RED, m.hr.numX, m.numY, A.NUMSM.w)
 
   const g = L.GRAPHS
   blit(cv, A.ICON_SRC.heartSm, g.rhr.iconX, g.iconY)
   drawGraph(cv, g, g.rhr, SAMPLE.rhr)
-  blit(cv, A.ICON_SRC.delta, g.hrv.iconX, g.iconY)
+  blit(cv, A.ICON_SRC.pulse, g.hrv.iconX, g.iconY)
   drawGraph(cv, g, g.hrv, SAMPLE.hrv)
   return cv
 }

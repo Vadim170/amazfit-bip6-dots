@@ -159,15 +159,13 @@ export const DROP = [
   '...###...',
 ]
 
-// delta = "variability" symbol for the HRV/stress graph
-export const DELTA = [
-  '....#....',
-  '....#....',
-  '...#.#...',
-  '...#.#...',
-  '..#...#..',
-  '..#...#..',
-  '.#.....#.',
-  '#########',
-  '#########',
+// pulse spike on a baseline = "variability" symbol for the HRV/stress graph
+export const PULSE = [
+  '...........',
+  '.....#.....',
+  '....#.#....',
+  '...#...#...',
+  '##.#...#.##',
+  '...........',
+  '...........',
 ]

@@ -22,11 +22,10 @@ export const TIME = {
   digitW: A.TIME_DIGIT.w, colonW: A.COLON.w,
 }
 
-// --- weather strip (top): icon  temp  [rain drop] -----------------------
+// --- weather strip (top): icon + temp (centred pair) --------------------
 export const WEATHER = {
-  iconX: 118, iconY: 46,
-  tempCx: 192, tempY: 53,
-  dropX: 224, dropY: 50,
+  iconX: 143, iconY: 46,
+  tempCx: 225, tempY: 53,
 }
 
 // --- date row: WEEKDAY  DD  MONTH (centred group) -----------------------
@@ -44,12 +43,12 @@ export const DATE = {
   monthY: R(dateCenterY - A.WORD.h / 2),
 }
 
-// --- metrics row: [foot] steps  |  [heart] hr (icon + left-aligned number) ---
+// --- metrics row: steps (plain number) | [heart] hr ---------------------
 export const METRICS = {
   numY: 322,
   iconY: 323,
-  numW: 110, // generous box; numbers are left-aligned right after the icon
-  steps: { iconX: 58, numX: 102 },   // foot icon + white number
+  numW: 110,
+  steps: { centerX: 108 },           // white number, no icon
   hr: { iconX: 232, numX: 276 },     // heart icon + red number
 }
 

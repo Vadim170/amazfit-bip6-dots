@@ -79,8 +79,6 @@ WatchFace({
     const w = L.WEATHER
     this.wxIcon = img(A.WX.cloudy, w.iconX, w.iconY, NORMAL)
     this.wxTemp = numBox(A.NUMSM_WHITE, { cx: w.tempCx, y: w.tempY, w: 80, show_level: NORMAL })
-    this.wxDrop = img(A.ICON_SRC.drop, w.dropX, w.dropY, NORMAL) // rain indicator
-    setMore(this.wxDrop, { alpha: 0 })
 
     const data = safe(() => Weather && new Weather().getForecastWeather(), null)
     const today = data && data.forecastData && data.forecastData.data && data.forecastData.data[0]
@@ -88,15 +86,13 @@ WatchFace({
       const cond = lookup(today.index)
       setMore(this.wxIcon, { src: A.WX[cond.icon] || A.WX.cloudy })
       setMore(this.wxTemp, { text: String(today.high) })
-      setMore(this.wxDrop, { alpha: cond.rain ? 255 : 0 })
     }
   },
 
   // ---- metrics: [foot] steps (white) | [heart] hr (red) ----------------
   buildMetrics() {
     const m = L.METRICS
-    img(A.ICON_SRC.foot, m.steps.iconX, m.iconY, NORMAL)
-    this.steps = numBox(A.NUMSM_WHITE, { x: m.steps.numX, y: m.numY, w: m.numW, align: hmUI.align.LEFT, show_level: NORMAL })
+    this.steps = numBox(A.NUMSM_WHITE, { cx: m.steps.centerX, y: m.numY, w: m.numW, show_level: NORMAL })
     const step = new Step()
     const showSteps = () => setMore(this.steps, { text: String(safe(() => step.getCurrent(), 0)) })
     showSteps()
@@ -121,8 +117,8 @@ WatchFace({
     const resting = safe(() => this.heart.getResting(), 0)
     this.drawGraph(g, g.rhr, record('rhr7', dayIndex, resting))
 
-    // HRV proxy = Stress — delta icon + bars
-    img(A.ICON_SRC.delta, g.hrv.iconX, g.iconY, NORMAL)
+    // HRV proxy = Stress — pulse icon + bars
+    img(A.ICON_SRC.pulse, g.hrv.iconX, g.iconY, NORMAL)
     const stress = safe(() => Stress && new Stress().getCurrent(), 0)
     this.drawGraph(g, g.hrv, record('hrv7', dayIndex, stress))
   },

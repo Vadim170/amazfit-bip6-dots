@@ -10,7 +10,7 @@ import { mkdirSync, writeFileSync, rmSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { GLYPHS } from './font5x7.mjs'
-import { WX, HEART, FOOT, DROP, DELTA } from './icons.mjs'
+import { WX, HEART, PULSE } from './icons.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const IMG_DIR = join(ROOT, 'assets', 'bip-6', 'images')
@@ -111,10 +111,8 @@ const WX_W = WX.clear[0].length * PITCH_ICON, WX_H = WX.clear.length * PITCH_ICO
 
 const icon = {
   heart: save(drawMatrix(HEART, { pitch: PITCH_ICON, color: RED }), 'icon/heart.png'),
-  foot: save(drawMatrix(FOOT, { pitch: PITCH_ICON, color: WHITE }), 'icon/foot.png'),
-  drop: save(drawMatrix(DROP, { pitch: PITCH_ICON, color: RED }), 'icon/drop.png'),
-  delta: save(drawMatrix(DELTA, { pitch: 3, color: MUTED }), 'icon/delta.png'),
   heartSm: save(drawMatrix(HEART, { pitch: 3, color: RED }), 'icon/heart_sm.png'),
+  pulse: save(drawMatrix(PULSE, { pitch: 3, color: MUTED }), 'icon/pulse.png'),
 }
 const ICON9_W = 9 * PITCH_ICON // 9x9 grid icons -> 36
 
