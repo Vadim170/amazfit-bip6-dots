@@ -23,11 +23,11 @@ const safe = (fn, fb) => { try { return fn() } catch (e) { return fb } }
 const img = (src, x, y, show_level) => hmUI.createWidget(hmUI.widget.IMG, { x, y, src, show_level })
 const setMore = (w, opts) => { try { w.setProperty(hmUI.prop.MORE, opts) } catch (e) {} }
 
-function numBox(fontArray, { cx, y, w, show_level }) {
+function numBox(fontArray, { cx, x, y, w, show_level, align }) {
   return hmUI.createWidget(hmUI.widget.TEXT_IMG, {
-    x: Math.round(cx - w / 2), y, w, h: A.NUMSM.h,
+    x: x !== undefined ? x : Math.round(cx - w / 2), y, w, h: A.NUMSM.h,
     font_array: fontArray, h_space: 2,
-    align_h: hmUI.align.CENTER_H, align_v: hmUI.align.TOP, show_level,
+    align_h: align || hmUI.align.CENTER_H, align_v: hmUI.align.TOP, show_level,
   })
 }
 
@@ -52,8 +52,6 @@ WatchFace({
       show_level: BOTH,
     })
     img(A.COLON.src, t.colon, t.y, BOTH)
-    // red accent tick — normal only
-    hmUI.createWidget(hmUI.widget.FILL_RECT, { x: Math.round(L.DEVICE.w / 2 - 20), y: t.tickY, w: 40, h: 4, radius: 2, color: C_RED, show_level: NORMAL })
   },
 
   // ---- date row: WEEKDAY  DD  MONTH (white, normal + AOD) ---------------
@@ -98,14 +96,14 @@ WatchFace({
   buildMetrics() {
     const m = L.METRICS
     img(A.ICON_SRC.foot, m.steps.iconX, m.iconY, NORMAL)
-    this.steps = numBox(A.NUMSM_WHITE, { cx: m.steps.centerX + 18, y: m.numY, w: 130, show_level: NORMAL })
+    this.steps = numBox(A.NUMSM_WHITE, { x: m.steps.numX, y: m.numY, w: m.numW, align: hmUI.align.LEFT, show_level: NORMAL })
     const step = new Step()
     const showSteps = () => setMore(this.steps, { text: String(safe(() => step.getCurrent(), 0)) })
     showSteps()
     safe(() => step.onChange(showSteps))
 
     img(A.ICON_SRC.heart, m.hr.iconX, m.iconY, NORMAL)
-    this.hr = numBox(A.NUMSM_RED, { cx: m.hr.centerX + 18, y: m.numY, w: 90, show_level: NORMAL })
+    this.hr = numBox(A.NUMSM_RED, { x: m.hr.numX, y: m.numY, w: m.numW, align: hmUI.align.LEFT, show_level: NORMAL })
     const heart = new HeartRate()
     this.heart = heart
     const showHr = () => setMore(this.hr, { text: String(safe(() => heart.getLast(), 0) || 0) })

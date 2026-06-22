@@ -20,7 +20,6 @@ export const TIME = {
   y: timeY, h: A.TIME_DIGIT.h,
   h1: xs[0], h2: xs[1], colon: xs[2], m1: xs[3], m2: xs[4],
   digitW: A.TIME_DIGIT.w, colonW: A.COLON.w,
-  tickY: timeY + A.TIME_DIGIT.h + 10,
 }
 
 // --- weather strip (top): icon  temp  [rain drop] -----------------------
@@ -45,12 +44,13 @@ export const DATE = {
   monthY: R(dateCenterY - A.WORD.h / 2),
 }
 
-// --- metrics row: [foot] steps  |  [heart] hr ---------------------------
+// --- metrics row: [foot] steps  |  [heart] hr (icon + left-aligned number) ---
 export const METRICS = {
   numY: 322,
   iconY: 323,
-  steps: { centerX: 108, iconX: 50 },     // foot icon + white number
-  hr: { centerX: 282, iconX: 224 },        // heart icon + red number
+  numW: 110, // generous box; numbers are left-aligned right after the icon
+  steps: { iconX: 58, numX: 102 },   // foot icon + white number
+  hr: { iconX: 232, numX: 276 },     // heart icon + red number
 }
 
 // --- two weekly mini bar graphs: RHR (left) + HRV/stress (right) ---------

@@ -58,7 +58,9 @@ const RED = { r: 215, g: 25, b: 33 }, WHITE = { r: 240, g: 240, b: 240 }, MUTED 
 
 function placeNum(cv, str, fontArr, cx, y, digitW, hspace = 2) {
   const w = str.length * digitW + (str.length - 1) * hspace
-  let x = Math.round(cx - w / 2)
+  placeNumLeft(cv, str, fontArr, Math.round(cx - w / 2), y, digitW, hspace)
+}
+function placeNumLeft(cv, str, fontArr, x, y, digitW, hspace = 2) {
   for (const ch of str) { blit(cv, fontArr[+ch], x, y); x += digitW + hspace }
 }
 
@@ -80,7 +82,6 @@ function render(aod) {
   blit(cv, A.COLON.src, t.colon, t.y)
   blit(cv, A.TIME_DIGITS[+mm[0]], t.m1, t.y)
   blit(cv, A.TIME_DIGITS[+mm[1]], t.m2, t.y)
-  if (!aod) rect(cv, Math.round(L.DEVICE.w / 2 - 20), t.tickY, 40, 4, RED)
 
   const d = L.DATE
   blit(cv, A.WEEKDAY[6], d.weekdayX, d.weekdayY) // SUN (sample)
@@ -95,9 +96,9 @@ function render(aod) {
 
   const m = L.METRICS
   blit(cv, A.ICON_SRC.foot, m.steps.iconX, m.iconY)
-  placeNum(cv, String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.centerX + 18, m.numY, A.NUMSM.w)
+  placeNumLeft(cv, String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.numX, m.numY, A.NUMSM.w)
   blit(cv, A.ICON_SRC.heart, m.hr.iconX, m.iconY)
-  placeNum(cv, String(SAMPLE.hr), A.NUMSM_RED, m.hr.centerX + 18, m.numY, A.NUMSM.w)
+  placeNumLeft(cv, String(SAMPLE.hr), A.NUMSM_RED, m.hr.numX, m.numY, A.NUMSM.w)
 
   const g = L.GRAPHS
   blit(cv, A.ICON_SRC.heartSm, g.rhr.iconX, g.iconY)

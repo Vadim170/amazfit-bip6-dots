@@ -54,7 +54,8 @@ const A = ${JSON.stringify(A)}, L = ${JSON.stringify(Lp)}, uris = ${JSON.stringi
 const stage = document.getElementById('stage');
 function place(src, x, y) { const i = document.createElement('img'); i.src = uris[src]; i.style.left = x + 'px'; i.style.top = y + 'px'; stage.appendChild(i); }
 function bar(x, y, w, h, c) { const e = document.createElement('div'); e.className = 'bar'; Object.assign(e.style, { left: x+'px', top: y+'px', width: w+'px', height: h+'px', background: c }); stage.appendChild(e); }
-function num(str, font, cx, y, dw, hs=2) { const w = str.length*dw + (str.length-1)*hs; let x = Math.round(cx-w/2); for (const ch of str) { place(font[+ch], x, y); x += dw+hs; } }
+function numLeft(str, font, x, y, dw, hs=2) { for (const ch of str) { place(font[+ch], x, y); x += dw+hs; } }
+function num(str, font, cx, y, dw, hs=2) { const w = str.length*dw + (str.length-1)*hs; numLeft(str, font, Math.round(cx-w/2), y, dw, hs); }
 function graph(g, spec, vals) {
   bar(spec.startX, g.baseY, g.w, 2, '#6a6a6a');
   const lo = Math.min(...vals)-4, span = Math.max(1, Math.max(...vals)+4-lo);
@@ -69,7 +70,6 @@ function render() {
   place(A.TIME_DIGITS[+hh[0]], t.h1, t.y); place(A.TIME_DIGITS[+hh[1]], t.h2, t.y);
   place(A.COLON.src, t.colon, t.y);
   place(A.TIME_DIGITS[+mm[0]], t.m1, t.y); place(A.TIME_DIGITS[+mm[1]], t.m2, t.y);
-  if (!aod) bar(L.DEVICE.w/2-20, t.tickY, 40, 4, '#d71921');
   const d = L.DATE;
   place(A.WEEKDAY[(now.getDay()+6)%7], d.weekdayX, d.weekdayY);
   place(A.MONTH[now.getMonth()], d.monthX, d.monthY);
@@ -81,9 +81,9 @@ function render() {
   if (SAMPLE.rain) place(A.ICON_SRC.drop, w.dropX, w.dropY);
   const m = L.METRICS;
   place(A.ICON_SRC.foot, m.steps.iconX, m.iconY);
-  num(String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.centerX+18, m.numY, A.NUMSM.w);
+  numLeft(String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.numX, m.numY, A.NUMSM.w);
   place(A.ICON_SRC.heart, m.hr.iconX, m.iconY);
-  num(String(SAMPLE.hr), A.NUMSM_RED, m.hr.centerX+18, m.numY, A.NUMSM.w);
+  numLeft(String(SAMPLE.hr), A.NUMSM_RED, m.hr.numX, m.numY, A.NUMSM.w);
   const g = L.GRAPHS;
   place(A.ICON_SRC.heartSm, g.rhr.iconX, g.iconY); graph(g, g.rhr, SAMPLE.rhr);
   place(A.ICON_SRC.delta, g.hrv.iconX, g.iconY); graph(g, g.hrv, SAMPLE.hrv);
