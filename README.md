@@ -28,7 +28,20 @@ npm run build               # -> dist/*.zab  (uses the global Zeus CLI)
 ```
 
 Install the Zeus CLI once: `npm i -g @zeppos/zeus-cli` (Node 18–24).
-On-watch install and the simulator: see [`docs/INSTALL.md`](docs/INSTALL.md).
+
+## Build & put it on the watch (TL;DR)
+
+```bash
+npm i -g @zeppos/zeus-cli          # once
+npm install && npm run build       # -> dist/<id>-Dots-<ver>.zab
+zeus login                         # your Zepp account
+zeus preview                       # prints a QR code in the terminal
+```
+
+Then on the phone: **Zepp app → Profile → Settings → About → tap the Zepp logo
+7×** to enable Developer Mode, tap **Scan**, and scan the QR — it installs to the
+paired Bip 6 over Bluetooth. Full details (simulator, bridge) in
+[`docs/INSTALL.md`](docs/INSTALL.md).
 
 ## Local preview (no watch, no simulator)
 
