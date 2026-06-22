@@ -45,14 +45,17 @@ function showNum(slots, font, value, y, cx, x) {
 }
 
 WatchFace({
-  build() {
+  // The watch-face runtime calls init_view(); build() delegates to it so the
+  // face works whichever hook the firmware invokes (mirrors the official sample).
+  init_view() {
     safe(() => { this.time = new Time() })
     hmUI.createWidget(hmUI.widget.FILL_RECT, { x: 0, y: 0, w: L.DEVICE.w, h: L.DEVICE.h, color: C_BLACK, show_level: BOTH })
     safe(() => this.buildTime())
     safe(() => this.buildDate())
     safe(() => this.buildWeather())
     safe(() => this.buildMetrics())
-    safe(() => this.buildGraphs())
+    // graphs temporarily disabled for debugging:
+    // safe(() => this.buildGraphs())
     safe(() => this.time && this.time.onPerMinute(() => this.tick()))
   },
 
@@ -160,6 +163,7 @@ WatchFace({
   },
 
   onInit() {},
+  build() { this.init_view() },
   onDestroy() {
     safe(() => this.heart && this.heart.offLastChange && this.heart.offLastChange())
   },
