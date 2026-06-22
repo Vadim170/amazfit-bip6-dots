@@ -1,7 +1,7 @@
 {
   "configVersion": "v3",
   "app": {
-    "appId": 1000001,
+    "appId": 4200042,
     "appName": "Dots",
     "appType": "watchface",
     "version": {
@@ -16,7 +16,7 @@
   "runtime": {
     "apiVersion": {
       "compatible": "4.0.0",
-      "target": "4.2.0",
+      "target": "4.0.2",
       "minVersion": "4.0.0"
     }
   },
