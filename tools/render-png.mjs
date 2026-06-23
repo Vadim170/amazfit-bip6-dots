@@ -85,7 +85,7 @@ function render(aod) {
 
   const d = L.DATE
   blit(cv, A.WEEKDAY[6], d.weekdayX, d.weekdayY) // SUN (sample)
-  placeNum(cv, '22', A.NUMSM_WHITE, d.ddCx, d.ddY, A.NUMSM.w)
+  placeNum(cv, '22', A.NUMWD_WHITE, d.ddCx, d.ddY, A.NUMWD.w)
   if (aod) return cv
 
   const w = L.WEATHER

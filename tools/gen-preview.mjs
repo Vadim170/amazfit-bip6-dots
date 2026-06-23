@@ -72,7 +72,7 @@ function render() {
   place(A.TIME_DIGITS[+mm[0]], t.m1, t.y); place(A.TIME_DIGITS[+mm[1]], t.m2, t.y);
   const d = L.DATE;
   place(A.WEEKDAY[(now.getDay()+6)%7], d.weekdayX, d.weekdayY);
-  num(String(now.getDate()), A.NUMSM_WHITE, d.ddCx, d.ddY, A.NUMSM.w);
+  num(String(now.getDate()), A.NUMWD_WHITE, d.ddCx, d.ddY, A.NUMWD.w);
   if (aod) return;
   const w = L.WEATHER;
   place(A.WX[SAMPLE.weatherIcon], w.iconX, w.iconY);

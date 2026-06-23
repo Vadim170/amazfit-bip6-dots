@@ -143,6 +143,12 @@ const DEG_PITCH = 4
 const degree = save(renderGlyph('°', { pitch: DEG_PITCH, color: WHITE }), 'num/deg.png')
 const DEG_W = 5 * DEG_PITCH, DEG_H = 7 * DEG_PITCH
 
+// date-day digits at the SAME pitch as the weekday word, so the date row is one
+// consistent font (no size jump between WEEKDAY and the day number)
+const numWd = []
+for (let d = 0; d <= 9; d++) numWd.push(save(renderGlyph(String(d), { pitch: PITCH_WORD, color: WHITE }), `numwd/w${d}.png`))
+const NUMWD_W = 5 * PITCH_WORD, NUMWD_H = 7 * PITCH_WORD
+
 const colon = save(renderGlyph(':', { pitch: PITCH_TIME, color: RED, canvasW: COLON_W, rf: 0.42 }), 'colon.png')
 
 const weekday = WEEKDAYS.map((w, i) => save(renderText(w, { pitch: PITCH_WORD, color: WHITE, canvasW: WORD_W, canvasH: WORD_H }), `word/wd${i}.png`))
@@ -205,6 +211,9 @@ export const NUMXS_RED = ${JSON.stringify(numXsRed)}
 export const WORD = { w: ${WORD_W}, h: ${WORD_H} }
 export const WEEKDAY = ${JSON.stringify(weekday)}
 export const MONTH = ${JSON.stringify(month)}
+
+export const NUMWD = { w: ${NUMWD_W}, h: ${NUMWD_H} }
+export const NUMWD_WHITE = ${JSON.stringify(numWd)}
 
 export const WX_ICON = { w: ${WX_W}, h: ${WX_H} }
 export const WX = ${JSON.stringify(wx, null, 2)}

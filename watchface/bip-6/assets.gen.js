@@ -16,6 +16,9 @@ export const WORD = { w: 102, h: 42 }
 export const WEEKDAY = ["images/word/wd0.png","images/word/wd1.png","images/word/wd2.png","images/word/wd3.png","images/word/wd4.png","images/word/wd5.png","images/word/wd6.png"]
 export const MONTH = ["images/word/mo0.png","images/word/mo1.png","images/word/mo2.png","images/word/mo3.png","images/word/mo4.png","images/word/mo5.png","images/word/mo6.png","images/word/mo7.png","images/word/mo8.png","images/word/mo9.png","images/word/mo10.png","images/word/mo11.png"]
 
+export const NUMWD = { w: 30, h: 42 }
+export const NUMWD_WHITE = ["images/numwd/w0.png","images/numwd/w1.png","images/numwd/w2.png","images/numwd/w3.png","images/numwd/w4.png","images/numwd/w5.png","images/numwd/w6.png","images/numwd/w7.png","images/numwd/w8.png","images/numwd/w9.png"]
+
 export const WX_ICON = { w: 44, h: 44 }
 export const WX = {
   "clear": "images/wx/clear.png",

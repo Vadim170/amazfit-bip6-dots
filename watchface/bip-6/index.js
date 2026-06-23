@@ -88,8 +88,8 @@ WatchFace({
     const wd = (week + 5) % 7                 // -> 0=Mon..6=Sun
     const day = safe(() => ts.day, 1)
     img(A.WEEKDAY[wd], d.weekdayX, d.weekdayY, BOTH)
-    const dd = pool(2, d.ddY, BOTH, A.NUMSM_WHITE[0])
-    showNum(dd, A.NUMSM_WHITE, A.NUMSM.w, day, d.ddY, d.ddCx)
+    const dd = pool(2, d.ddY, BOTH, A.NUMWD_WHITE[0])
+    showNum(dd, A.NUMWD_WHITE, A.NUMWD.w, day, d.ddY, d.ddCx)
   },
 
   // ---- weather strip (built-in WEATHER sensor, phone-synced) -----------

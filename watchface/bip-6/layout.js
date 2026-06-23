@@ -31,14 +31,14 @@ export const WEATHER = {
 // --- date row: WEEKDAY  DD  (no month, centred) ------------------------
 const dateCenterY = 292
 const DATE_GAP = 12
-const ddBoxW = 2 * A.NUMSM.w
+const ddBoxW = 2 * A.NUMWD.w // day digits share the weekday's pitch (one font)
 const dateTotal = A.WORD.w + DATE_GAP + ddBoxW
 const dateStartX = R((DEVICE.w - dateTotal) / 2)
 export const DATE = {
   weekdayX: dateStartX,
   weekdayY: R(dateCenterY - A.WORD.h / 2),
   ddCx: dateStartX + A.WORD.w + DATE_GAP + R(ddBoxW / 2),
-  ddY: R(dateCenterY - A.NUMSM.h / 2),
+  ddY: R(dateCenterY - A.NUMWD.h / 2),
 }
 
 // --- metrics row: steps (white) | [heart] hr (red) — small & low -------
