@@ -1,70 +1,65 @@
 # Architecture
 
+A high-level map of how the project fits together. (For exact APIs, read the
+source — this doc stays descriptive so it doesn't go stale.)
+
 ## Layout of the repo
 
 ```
-app.json                     # Zepp OS manifest (target = Amazfit Bip 6)
-app.js                       # empty App() shell
+app.js, app.json             # watch-face manifest + shell
 watchface/bip-6/
-  index.js                   # the watch face (WatchFace lifecycle, widgets)
-  layout.js                  # ALL screen geometry (single source of truth)
+  index.js                   # the watch face itself (draws & updates everything)
+  layout.js                  # all screen geometry — the single source of truth
   assets.gen.js              # GENERATED: image paths + sizes
-  weather-codes.js           # Zepp condition index -> icon + rain flag
-  history-store.js           # rolling 7-day store for RHR / stress
+  weather-codes.js           # maps a weather condition code -> icon + rain flag
 assets/bip-6/images/         # GENERATED dot-matrix PNGs
 tools/
-  font5x7.mjs                # the 5x7 dot-matrix font (A–Z, 0–9, symbols)
-  icons.mjs                  # dotted pictograms (weather, heart, foot, drop, delta)
-  gen-assets.mjs             # renders PNGs + writes assets.gen.js
-  render-png.mjs             # composites flat preview PNGs (README screenshots)
-  gen-preview.mjs            # builds the interactive local HTML preview
-preview/                     # generated previews (PNG committed, HTML ignored)
+  font5x7.mjs                # the 5x7 dot-matrix font
+  icons.mjs                  # dotted pictograms (weather, heart)
+  gen-assets.mjs             # renders all PNGs + writes assets.gen.js
+  render-png.mjs             # flat preview images (README screenshots)
+  gen-preview.mjs            # interactive local HTML preview
+preview/                     # generated previews
 ```
 
-## The single-source-of-truth chain
+## The idea: one source of truth, everything derived
 
-Everything visual is derived, never duplicated by hand:
+Nothing visual is hand-duplicated. The look flows in one direction:
 
 ```
-font5x7.mjs + icons.mjs
-        │  (gen-assets.mjs renders dots as anti-aliased circles)
-        ▼
-assets/bip-6/images/*.png  +  watchface/bip-6/assets.gen.js   (paths + sizes)
-        │
-        ▼
-watchface/bip-6/layout.js   (computes every x/y from those sizes; integers only)
-        │
-        ├──────────────► watchface/bip-6/index.js   (device: hmUI widgets)
-        └──────────────► tools/render-png.mjs & gen-preview.mjs   (preview)
+font + icons  →  gen-assets  →  PNG images + assets.gen.js (paths & sizes)
+                                          │
+                                          ▼
+                                   layout.js (every x/y, computed from sizes)
+                                    │                     │
+                              index.js (device)     preview tools
 ```
 
-Because `index.js` and the preview tools both import the same `layout.js` +
-`assets.gen.js`, **the local preview is pixel-exact** with the device.
+Because the watch face and the preview tools both read the **same** `layout.js`
+and the **same** generated images, the local preview is pixel-exact with the
+device. All coordinates are integers (a fractional value once corrupted the
+preview compositor).
 
-> Coordinates must be integers. A fractional `y` corrupts the preview
-> compositor's buffer indexing, so `layout.js` rounds every value.
+## How the dots are made
 
-## Rendering on the device
+Every glyph and icon is a grid of dots, each dot drawn as a small anti-aliased
+circle. The same font scales to any size by changing one number (the dot pitch):
+large for the clock, smaller for the date, smallest for the metrics. Words,
+digits and icons are emitted as individual PNGs that the watch composites.
 
-- **Time** — one OS-driven `IMG_TIME` widget fed the white dot-matrix digit
-  array, plus a red colon `IMG`. The OS redraws it; the JS runtime never wakes
-  per second. Shown in both normal and AOD (`show_level = NORMAL | AOD`).
-- **Date / words** — `IMG` widgets whose `src` is swapped on day change
-  (`Time.onPerDay`). Weekday/month are pre-rendered words; the day number is a
-  `TEXT_IMG` digit-image widget.
-- **Metrics & graphs** — `TEXT_IMG` numbers and `FILL_RECT` bars, normal-mode
-  only. Updated from sensor `onChange` callbacks, not polling.
+## On the watch
 
-## Dot-matrix font
+- The clock is **OS-driven**, so it updates (including in Always-On Display)
+  without waking the app.
+- The date, weather, steps and heart rate are read from the watch's sensors and
+  drawn as dot images.
+- The two weekly graphs are drawn from a small rolling history the face keeps
+  itself (see [`DATA-AND-LIMITATIONS.md`](DATA-AND-LIMITATIONS.md)).
 
-`font5x7.mjs` holds each glyph as 7 rows × 5 columns of `#`/`.`. `gen-assets.mjs`
-draws every `#` as an anti-aliased filled circle on a transparent canvas, so the
-same font scales to any "pitch" (dot spacing): big for the clock, small for
-metrics. Words and digits are emitted as individual PNGs for `IMG`/`TEXT_IMG`.
+## Regenerating
 
-## Asset generation is reproducible
-
-`npm run assets` deletes `assets/bip-6/images/` and regenerates everything plus
-`assets.gen.js`. The generated PNGs and `assets.gen.js` are committed so
-`zeus build` works on a fresh clone without running the generator first
-(`prebuild` regenerates them anyway).
+`npm run assets` re-renders every image and `assets.gen.js` from the font and
+icons; it runs automatically before a build. The generated files are committed
+so a fresh clone builds without extra steps. Change the look by editing the font
+(`tools/font5x7.mjs`), the icons (`tools/icons.mjs`), or the palette/geometry in
+`tools/gen-assets.mjs` and `watchface/bip-6/layout.js`.

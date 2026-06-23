@@ -5,7 +5,7 @@ export const COLON = { w: 32, h: 112, src: 'images/colon.png' }
 
 export const NUMSM = { w: 25, h: 35 }
 export const NUMSM_WHITE = ["images/num/w0.png","images/num/w1.png","images/num/w2.png","images/num/w3.png","images/num/w4.png","images/num/w5.png","images/num/w6.png","images/num/w7.png","images/num/w8.png","images/num/w9.png"]
-export const NUMSM_RED = ["images/num/r0.png","images/num/r1.png","images/num/r2.png","images/num/r3.png","images/num/r4.png","images/num/r5.png","images/num/r6.png","images/num/r7.png","images/num/r8.png","images/num/r9.png"]
+export const NUMSM_MINUS = 'images/num/minus.png'
 export const DEGREE = { src: 'images/num/deg.png', w: 20, h: 28 }
 
 export const NUMXS = { w: 20, h: 28 }
@@ -14,7 +14,6 @@ export const NUMXS_RED = ["images/numxs/r0.png","images/numxs/r1.png","images/nu
 
 export const WORD = { w: 102, h: 42 }
 export const WEEKDAY = ["images/word/wd0.png","images/word/wd1.png","images/word/wd2.png","images/word/wd3.png","images/word/wd4.png","images/word/wd5.png","images/word/wd6.png"]
-export const MONTH = ["images/word/mo0.png","images/word/mo1.png","images/word/mo2.png","images/word/mo3.png","images/word/mo4.png","images/word/mo5.png","images/word/mo6.png","images/word/mo7.png","images/word/mo8.png","images/word/mo9.png","images/word/mo10.png","images/word/mo11.png"]
 
 export const NUMWD = { w: 30, h: 42 }
 export const NUMWD_WHITE = ["images/numwd/w0.png","images/numwd/w1.png","images/numwd/w2.png","images/numwd/w3.png","images/numwd/w4.png","images/numwd/w5.png","images/numwd/w6.png","images/numwd/w7.png","images/numwd/w8.png","images/numwd/w9.png"]

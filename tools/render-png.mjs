@@ -61,7 +61,12 @@ function placeNum(cv, str, fontArr, cx, y, digitW, hspace = 2) {
   placeNumLeft(cv, str, fontArr, Math.round(cx - w / 2), y, digitW, hspace)
 }
 function placeNumLeft(cv, str, fontArr, x, y, digitW, hspace = 2) {
-  for (const ch of str) { blit(cv, fontArr[+ch], x, y); x += digitW + hspace }
+  for (const ch of str) {
+    if (ch === '-') blit(cv, A.NUMSM_MINUS, x, y)
+    else if (ch >= '0' && ch <= '9') blit(cv, fontArr[+ch], x, y)
+    else continue
+    x += digitW + hspace
+  }
 }
 
 function drawGraph(cv, g, spec, vals) {

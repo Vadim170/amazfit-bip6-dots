@@ -134,38 +134,3 @@ export const HEART = [
   '.........',
 ]
 
-export const FOOT = [
-  '..###....',
-  '.#####...',
-  '######.#.',
-  '######.##',
-  '.#####.##',
-  '..###..#.',
-  '..###....',
-  '...#.....',
-  '..##.....',
-]
-
-// teardrop OUTLINE — reads clearly as a rain drop (a filled blob looks like a dot)
-export const DROP = [
-  '....#....',
-  '....#....',
-  '...#.#...',
-  '...#.#...',
-  '..#...#..',
-  '.#.....#.',
-  '.#.....#.',
-  '..#...#..',
-  '...###...',
-]
-
-// pulse spike on a baseline = "variability" symbol for the HRV/stress graph
-export const PULSE = [
-  '...........',
-  '.....#.....',
-  '....#.#....',
-  '...#...#...',
-  '##.#...#.##',
-  '...........',
-  '...........',
-]

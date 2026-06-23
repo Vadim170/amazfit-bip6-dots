@@ -1,73 +1,47 @@
-# Data sources, limitations & energy
+# Data shown, and what the watch won't share
 
-The Bip 6 runs **Zepp OS 5.0 (API_LEVEL 4.2)**, so the modern `@zos/*` modules
-are available. This face reads everything through `@zos/sensor`.
+This face only ever reads data the watch already has; it does no networking of
+its own. Here's what it shows and, just as importantly, what it can't.
 
-## What it reads
+## What it shows
 
-| Data | API | Notes |
-|---|---|---|
-| Time / date | `@zos/sensor` `Time` | `getHours/Minutes`, `getDate`, `getMonth` (1–12), `getDay` (1=Mon…7=Sun) |
-| Steps | `@zos/sensor` `Step` | `getCurrent()`, `onChange()` |
-| Heart rate | `@zos/sensor` `HeartRate` | `getLast()` for the shown value, `getResting()` (API ≥ 3.0) for the graph |
-| Weather | `@zos/sensor` `Weather` | `getForecastWeather()` → today's `high` + condition `index` |
-| Stress | `@zos/sensor` `Stress` | `getCurrent()` — used as the HRV proxy |
+- **Time and date** — current time and the weekday + day.
+- **Weather** — today's condition (as a dotted icon) and temperature, including
+  sub-zero with a minus sign. The forecast is whatever the phone has synced.
+- **Steps** and **heart rate** — the current values.
+- **Two weekly graphs** — a resting-heart-rate trend and a heart-rate
+  variability trend (see the proxies below).
 
-## The three honest limitations
+## The honest limitations
 
-### 1. HRV has no watch-face API
+**HRV isn't exposed to a watch face.** There's no way to read a real HRV value.
+The second graph therefore shows a **variability proxy** computed from the
+day's heart-rate spread, not true HRV.
 
-There is **no HRV sensor** in `@zos/sensor` and no `hmSensor` id for it. HRV is a
-user-facing Zepp feature but is **not exposed to watch faces or mini-apps**. The
-nearest available metric the watch computes *from* HRV is **Stress**, so the
-second weekly graph (△ icon) plots stress. This is labelled as a proxy, not real
-HRV. If a future firmware exposes HRV, only `history-store.js` + one sensor read
-in `buildGraphs()` would change.
+**No multi-day history is provided either.** The watch hands a face only "right
+now" values, not a week of them. So the face records one sample per day itself
+and keeps a rolling 7-day window. The graphs **fill in as the watch is worn** —
+a fresh install shows just today, and the trends build up over the following
+days. The resting-HR trend uses each day's lowest heart rate as a stand-in for
+resting HR.
 
-### 2. No multi-day history is exposed
+**Weather can't come from a custom provider.** A watch face has no internet
+access, so it relies on the forecast the Zepp phone app syncs over Bluetooth.
+The provider and refresh rate are the phone's to decide, not ours — a source
+like a specific weather API can't be wired in from a watch face.
 
-A watch face can read **today's** intraday heart rate and the **current** resting
-HR / stress — but **no 7-day series**. To draw weekly graphs we sample one value
-per day and persist it ourselves in `@zos/storage` (`history-store.js`, keyed by
-UTC day index, rolling 7 entries). So the graphs **fill in as the watch is worn**
-across days; a fresh install shows just today's bar.
-
-### 3. Weather is phone-synced; no custom provider
-
-A Zepp OS **watch face has no network** — no `fetch`, and (unlike mini-apps) it
-cannot host a phone-side service. Confirmed by Zepp maintainers
-([discussion #343](https://github.com/orgs/zepp-health/discussions/343),
-[#330](https://github.com/orgs/zepp-health/discussions/330)). The only outbound
-channel for *mini-apps* is a Side Service `fetch`, which watch faces don't have.
-
-Therefore a custom source such as **Yandex Weather is not possible from a watch
-face**. We use the built-in `Weather` sensor, which the **Zepp phone app fetches
-from its own provider and syncs over Bluetooth** — zero network code on the watch
-and zero extra battery cost. The face cannot choose the provider or the refresh
-rate; the phone decides.
-
-> If custom Yandex data were a hard requirement it would need a *separate*
-> companion mini-app doing the fetch in a Side Service and writing a file the
-> face reads — but app storage is sandboxed per app, so this is fragile and
-> dependent on that mini-app running. Not implemented here by design.
-
-#### Weather condition codes
-
-Zepp does not publish the official `index` → condition table for the watch-face
-Weather sensor. `weather-codes.js` maps the commonly-observed Huami codes to an
-icon + a rain flag, and is intentionally isolated so it is trivial to recalibrate
-on a real device (just edit one entry's `icon`/`rain`).
+**Weather condition codes aren't officially documented.** The mapping from the
+synced condition code to an icon (and the "will it rain" flag) lives in one
+small file (`weather-codes.js`) and is easy to adjust if a code looks off on a
+real device.
 
 ## Energy efficiency
 
 The face is built to sip battery:
 
-- **Black everywhere.** On the Bip 6's AMOLED, black pixels are off. Only the
-  white dots and the red accent draw power. AOD lights well under 10% of pixels.
-- **No seconds, OS-driven time.** `IMG_TIME` is redrawn by the OS; the JS runtime
-  does not wake every second (or even every minute) to paint the clock.
-- **Event-driven, not polled.** Steps and HR update from `onChange`/`onLastChange`
-  callbacks; the date updates on `onPerDay`. Nothing runs on a timer.
-- **Static raster.** Every glyph/icon is a pre-rendered PNG composited by the OS —
-  no per-frame vector drawing.
-- **Heart-rate listeners released** in `onDestroy()`.
+- **Black everywhere** — on this AMOLED screen black pixels are off, so only the
+  white dots and the red accent draw power; Always-On Display lights very few.
+- **No seconds, OS-driven clock** — the app isn't woken every second (or minute)
+  just to repaint the time.
+- **Event-driven** — metrics update when they change, nothing polls on a timer.
+- **Static dot images** — composited by the watch rather than redrawn each frame.

@@ -116,7 +116,6 @@ const WORD_W = 3 * 5 * PITCH_WORD + 2 * PITCH_WORD // 3 glyphs + 2 inter-letter 
 const COLON_W = 2 * PITCH_TIME
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
-const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
 // ---- generate --------------------------------------------------------------
 rmSync(IMG_DIR, { recursive: true, force: true })
@@ -127,11 +126,9 @@ const timeDigits = []
 // each other on the AMOLED at full brightness
 for (let d = 0; d <= 9; d++) timeDigits.push(save(renderGlyph(String(d), { pitch: PITCH_TIME, color: WHITE, rf: 0.36 }), `time/w${d}.png`))
 
-const numWhite = [], numRed = []
-for (let d = 0; d <= 9; d++) {
-  numWhite.push(save(renderGlyph(String(d), { pitch: PITCH_NUMSM, color: WHITE }), `num/w${d}.png`))
-  numRed.push(save(renderGlyph(String(d), { pitch: PITCH_NUMSM, color: RED }), `num/r${d}.png`))
-}
+const numWhite = []
+for (let d = 0; d <= 9; d++) numWhite.push(save(renderGlyph(String(d), { pitch: PITCH_NUMSM, color: WHITE }), `num/w${d}.png`))
+const numMinus = save(renderGlyph('-', { pitch: PITCH_NUMSM, color: WHITE }), 'num/minus.png')
 
 const numXsWhite = [], numXsRed = []
 for (let d = 0; d <= 9; d++) {
@@ -152,7 +149,6 @@ const NUMWD_W = 5 * PITCH_WORD, NUMWD_H = 7 * PITCH_WORD
 const colon = save(renderGlyph(':', { pitch: PITCH_TIME, color: RED, canvasW: COLON_W, rf: 0.42 }), 'colon.png')
 
 const weekday = WEEKDAYS.map((w, i) => save(renderText(w, { pitch: PITCH_WORD, color: WHITE, canvasW: WORD_W, canvasH: WORD_H }), `word/wd${i}.png`))
-const month = MONTHS.map((m, i) => save(renderText(m, { pitch: PITCH_WORD, color: WHITE, canvasW: WORD_W, canvasH: WORD_H }), `word/mo${i}.png`))
 
 // pictograms
 const wx = {}
@@ -201,7 +197,7 @@ export const COLON = { w: ${COLON_W}, h: ${TIME_H}, src: '${colon}' }
 
 export const NUMSM = { w: ${NUMSM_W}, h: ${NUMSM_H} }
 export const NUMSM_WHITE = ${JSON.stringify(numWhite)}
-export const NUMSM_RED = ${JSON.stringify(numRed)}
+export const NUMSM_MINUS = '${numMinus}'
 export const DEGREE = { src: '${degree}', w: ${DEG_W}, h: ${DEG_H} }
 
 export const NUMXS = { w: ${NUMXS_W}, h: ${NUMXS_H} }
@@ -210,7 +206,6 @@ export const NUMXS_RED = ${JSON.stringify(numXsRed)}
 
 export const WORD = { w: ${WORD_W}, h: ${WORD_H} }
 export const WEEKDAY = ${JSON.stringify(weekday)}
-export const MONTH = ${JSON.stringify(month)}
 
 export const NUMWD = { w: ${NUMWD_W}, h: ${NUMWD_H} }
 export const NUMWD_WHITE = ${JSON.stringify(numWd)}

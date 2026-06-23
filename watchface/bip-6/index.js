@@ -27,13 +27,14 @@ function pool(n, y, sl, initSrc) {
   for (let i = 0; i < n; i++) { const w = img(initSrc, 0, y, sl); vis(w, false); s.push(w) }
   return s
 }
-function showNum(slots, font, dw, value, y, cx, x) {
+function showNum(slots, font, dw, value, y, cx, x, minusSrc) {
   const str = String(value)
   const total = str.length * dw + (str.length - 1) * HS
   let px = x !== undefined ? x : Math.round(cx - total / 2)
   for (let i = 0; i < slots.length; i++) {
     const c = str[i]
-    if (i < str.length && c >= '0' && c <= '9') { setp(slots[i], { x: px, y, src: font[+c] }); vis(slots[i], true); px += dw + HS }
+    const src = c >= '0' && c <= '9' ? font[+c] : (c === '-' ? minusSrc : null)
+    if (i < str.length && src) { setp(slots[i], { x: px, y, src }); vis(slots[i], true); px += dw + HS }
     else vis(slots[i], false)
   }
 }
@@ -80,7 +81,7 @@ WatchFace({
     img(A.COLON.src, t.colon, t.y, BOTH)
   },
 
-  // ---- date row: WEEKDAY  DD  MONTH (white, normal + AOD) ---------------
+  // ---- date row: WEEKDAY  DD (white, normal + AOD) ---------------------
   buildDate() {
     const d = L.DATE
     const ts = safe(() => hmSensor.createSensor(hmSensor.id.TIME))
@@ -103,7 +104,7 @@ WatchFace({
     const today = data && data.forecastData && data.forecastData.data && data.forecastData.data[0]
     if (today) {
       setp(icon, { src: A.WX[lookup(today.index).icon] || A.WX.cloudy })
-      showNum(temp, A.NUMSM_WHITE, A.NUMSM.w, Math.round(today.high), w.tempY, w.tempCx)
+      showNum(temp, A.NUMSM_WHITE, A.NUMSM.w, Math.round(today.high), w.tempY, w.tempCx, undefined, A.NUMSM_MINUS)
       vis(deg, true)
     }
   },

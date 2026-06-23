@@ -54,7 +54,7 @@ const A = ${JSON.stringify(A)}, L = ${JSON.stringify(Lp)}, uris = ${JSON.stringi
 const stage = document.getElementById('stage');
 function place(src, x, y) { const i = document.createElement('img'); i.src = uris[src]; i.style.left = x + 'px'; i.style.top = y + 'px'; stage.appendChild(i); }
 function bar(x, y, w, h, c) { const e = document.createElement('div'); e.className = 'bar'; Object.assign(e.style, { left: x+'px', top: y+'px', width: w+'px', height: h+'px', background: c }); stage.appendChild(e); }
-function numLeft(str, font, x, y, dw, hs=2) { for (const ch of str) { place(font[+ch], x, y); x += dw+hs; } }
+function numLeft(str, font, x, y, dw, hs=2) { for (const ch of str) { if (ch==='-') place(A.NUMSM_MINUS, x, y); else if (ch>='0'&&ch<='9') place(font[+ch], x, y); else continue; x += dw+hs; } }
 function num(str, font, cx, y, dw, hs=2) { const w = str.length*dw + (str.length-1)*hs; numLeft(str, font, Math.round(cx-w/2), y, dw, hs); }
 function graph(g, spec, vals) {
   bar(spec.barsX, g.baseY, g.w, 2, '#6a6a6a');
