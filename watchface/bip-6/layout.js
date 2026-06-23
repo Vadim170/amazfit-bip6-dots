@@ -7,7 +7,7 @@ export const DEVICE = { w: 390, h: 450 }
 const R = (n) => Math.round(n)
 
 // --- big HH:MM, edge to edge -------------------------------------------
-const GAP = 2
+const GAP = 7 // wider inter-digit gap so bright dots don't visually merge
 const order = [A.TIME_DIGIT.w, A.TIME_DIGIT.w, A.COLON.w, A.TIME_DIGIT.w, A.TIME_DIGIT.w]
 const timeTotal = order.reduce((a, b) => a + b, 0) + (order.length - 1) * GAP
 const timeStartX = R((DEVICE.w - timeTotal) / 2)

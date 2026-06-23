@@ -56,9 +56,9 @@ function textMatrix(str) {
   return rows
 }
 
-function drawMatrix(matrix, { pitch, color, canvasW, canvasH }) {
+function drawMatrix(matrix, { pitch, color, canvasW, canvasH, rf = 0.4 }) {
   const cols = matrix[0].length, rows = matrix.length
-  const radius = pitch * 0.4
+  const radius = pitch * rf
   const natW = cols * pitch, natH = rows * pitch
   const w = canvasW || natW, h = canvasH || natH
   const cv = canvas(w, h)
@@ -72,7 +72,7 @@ const renderText = (str, opts) => drawMatrix(textMatrix(str), opts)
 const renderGlyph = (ch, opts) => drawMatrix(GLYPHS[ch] || GLYPHS[' '], opts)
 
 // ---- geometry --------------------------------------------------------------
-const PITCH_TIME = 17   // big HH:MM digits, edge to edge -> 85 x 119
+const PITCH_TIME = 16   // big HH:MM digits, edge to edge -> 80 x 112
 const PITCH_NUMSM = 5   // date / temperature digits -> 25 x 35
 const PITCH_NUMXS = 4   // small metric digits (steps/HR) -> 20 x 28
 const PITCH_WORD = 6    // weekday word
@@ -93,7 +93,9 @@ rmSync(IMG_DIR, { recursive: true, force: true })
 mkdirSync(IMG_DIR, { recursive: true })
 
 const timeDigits = []
-for (let d = 0; d <= 9; d++) timeDigits.push(save(renderGlyph(String(d), { pitch: PITCH_TIME, color: WHITE }), `time/w${d}.png`))
+// smaller dot radius (rf) on big digits so bright white dots don't bloom into
+// each other on the AMOLED at full brightness
+for (let d = 0; d <= 9; d++) timeDigits.push(save(renderGlyph(String(d), { pitch: PITCH_TIME, color: WHITE, rf: 0.36 }), `time/w${d}.png`))
 
 const numWhite = [], numRed = []
 for (let d = 0; d <= 9; d++) {
@@ -111,7 +113,7 @@ const DEG_PITCH = 4
 const degree = save(renderGlyph('°', { pitch: DEG_PITCH, color: WHITE }), 'num/deg.png')
 const DEG_W = 5 * DEG_PITCH, DEG_H = 7 * DEG_PITCH
 
-const colon = save(renderGlyph(':', { pitch: PITCH_TIME, color: RED, canvasW: COLON_W }), 'colon.png')
+const colon = save(renderGlyph(':', { pitch: PITCH_TIME, color: RED, canvasW: COLON_W, rf: 0.42 }), 'colon.png')
 
 const weekday = WEEKDAYS.map((w, i) => save(renderText(w, { pitch: PITCH_WORD, color: WHITE, canvasW: WORD_W, canvasH: WORD_H }), `word/wd${i}.png`))
 const month = MONTHS.map((m, i) => save(renderText(m, { pitch: PITCH_WORD, color: WHITE, canvasW: WORD_W, canvasH: WORD_H }), `word/mo${i}.png`))
