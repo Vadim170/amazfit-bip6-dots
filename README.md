@@ -4,7 +4,11 @@ A minimal dot-matrix watch face for the **Amazfit Bip 6**. Black screen, white
 dots, a single red accent — inspired by Nothing's aesthetic. Time in dots,
 **no hands, no seconds**. English only. Energy-conscious.
 
-![normal](preview/render-normal.png) ![aod](preview/render-aod.png)
+![Dots watch face — normal and Always-On Display](preview/screenshot.png)
+
+> ⚠️ Built entirely by Claude (Anthropic's Claude Code). The human operator never
+> read the code — every change to the project files was made by the model, then
+> compiled and flashed. Treat it accordingly.
 
 ## What's on screen
 
