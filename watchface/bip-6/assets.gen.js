@@ -6,7 +6,7 @@ export const COLON = { w: 34, h: 119, src: 'images/colon.png' }
 export const NUMSM = { w: 25, h: 35 }
 export const NUMSM_WHITE = ["images/num/w0.png","images/num/w1.png","images/num/w2.png","images/num/w3.png","images/num/w4.png","images/num/w5.png","images/num/w6.png","images/num/w7.png","images/num/w8.png","images/num/w9.png"]
 export const NUMSM_RED = ["images/num/r0.png","images/num/r1.png","images/num/r2.png","images/num/r3.png","images/num/r4.png","images/num/r5.png","images/num/r6.png","images/num/r7.png","images/num/r8.png","images/num/r9.png"]
-export const DEGREE = { src: 'images/num/deg.png', w: 16, h: 35 }
+export const DEGREE = { src: 'images/num/deg.png', w: 20, h: 28 }
 
 export const NUMXS = { w: 20, h: 28 }
 export const NUMXS_WHITE = ["images/numxs/w0.png","images/numxs/w1.png","images/numxs/w2.png","images/numxs/w3.png","images/numxs/w4.png","images/numxs/w5.png","images/numxs/w6.png","images/numxs/w7.png","images/numxs/w8.png","images/numxs/w9.png"]

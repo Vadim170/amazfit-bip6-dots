@@ -25,11 +25,11 @@ export const TIME = {
 export const WEATHER = {
   iconX: 132, iconY: 22,
   tempCx: 210, tempY: 30,
-  degX: 238, degY: 30,
+  degX: 240, degY: 28,
 }
 
 // --- date row: WEEKDAY  DD  (no month, centred) ------------------------
-const dateCenterY = 272
+const dateCenterY = 292
 const DATE_GAP = 12
 const ddBoxW = 2 * A.NUMSM.w
 const dateTotal = A.WORD.w + DATE_GAP + ddBoxW
@@ -43,10 +43,10 @@ export const DATE = {
 
 // --- metrics row: steps (white) | [heart] hr (red) — small & low -------
 export const METRICS = {
-  numY: 330,
+  numY: 360,
   numW: 90,
   steps: { centerX: 112 },
-  hr: { iconX: 244, iconY: 327, numX: 276 },
+  hr: { iconX: 244, iconY: 358, numX: 276 },
 }
 
 // --- two weekly mini bar graphs: icon inline (left) + bars -------------

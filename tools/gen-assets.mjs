@@ -107,7 +107,9 @@ for (let d = 0; d <= 9; d++) {
   numXsRed.push(save(renderGlyph(String(d), { pitch: PITCH_NUMXS, color: RED }), `numxs/r${d}.png`))
 }
 
-const degree = save(renderGlyph('°', { pitch: PITCH_NUMSM, color: WHITE, canvasW: 16 }), 'num/deg.png')
+const DEG_PITCH = 4
+const degree = save(renderGlyph('°', { pitch: DEG_PITCH, color: WHITE }), 'num/deg.png')
+const DEG_W = 5 * DEG_PITCH, DEG_H = 7 * DEG_PITCH
 
 const colon = save(renderGlyph(':', { pitch: PITCH_TIME, color: RED, canvasW: COLON_W }), 'colon.png')
 
@@ -162,7 +164,7 @@ export const COLON = { w: ${COLON_W}, h: ${TIME_H}, src: '${colon}' }
 export const NUMSM = { w: ${NUMSM_W}, h: ${NUMSM_H} }
 export const NUMSM_WHITE = ${JSON.stringify(numWhite)}
 export const NUMSM_RED = ${JSON.stringify(numRed)}
-export const DEGREE = { src: '${degree}', w: 16, h: ${NUMSM_H} }
+export const DEGREE = { src: '${degree}', w: ${DEG_W}, h: ${DEG_H} }
 
 export const NUMXS = { w: ${NUMXS_W}, h: ${NUMXS_H} }
 export const NUMXS_WHITE = ${JSON.stringify(numXsWhite)}
