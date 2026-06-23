@@ -22,14 +22,13 @@ const setp = (w, o) => { try { w.setProperty(hmUI.prop.MORE, o) } catch (e) {} }
 const vis = (w, b) => { try { w.setProperty(hmUI.prop.VISIBLE, b) } catch (e) {} }
 
 // pool of n digit-image IMG slots (created hidden); updated by src/x/visibility
-function pool(n, y, sl) {
+function pool(n, y, sl, initSrc) {
   const s = []
-  for (let i = 0; i < n; i++) { const w = img(A.NUMSM_WHITE[0], 0, y, sl); vis(w, false); s.push(w) }
+  for (let i = 0; i < n; i++) { const w = img(initSrc, 0, y, sl); vis(w, false); s.push(w) }
   return s
 }
-function showNum(slots, font, value, y, cx, x) {
+function showNum(slots, font, dw, value, y, cx, x) {
   const str = String(value)
-  const dw = A.NUMSM.w
   const total = str.length * dw + (str.length - 1) * HS
   let px = x !== undefined ? x : Math.round(cx - total / 2)
   for (let i = 0; i < slots.length; i++) {
@@ -87,40 +86,41 @@ WatchFace({
     const ts = safe(() => hmSensor.createSensor(hmSensor.id.TIME))
     const week = safe(() => ts.week, 1)      // legacy: 1=Sun..7=Sat
     const wd = (week + 5) % 7                 // -> 0=Mon..6=Sun
-    const mo = (safe(() => ts.month, 1) - 1) % 12
     const day = safe(() => ts.day, 1)
     img(A.WEEKDAY[wd], d.weekdayX, d.weekdayY, BOTH)
-    img(A.MONTH[mo], d.monthX, d.monthY, BOTH)
-    const dd = pool(2, d.ddY, BOTH)
-    showNum(dd, A.NUMSM_WHITE, day, d.ddY, d.ddCx)
+    const dd = pool(2, d.ddY, BOTH, A.NUMSM_WHITE[0])
+    showNum(dd, A.NUMSM_WHITE, A.NUMSM.w, day, d.ddY, d.ddCx)
   },
 
   // ---- weather strip (built-in WEATHER sensor, phone-synced) -----------
   buildWeather() {
     const w = L.WEATHER
     const icon = img(A.WX.cloudy, w.iconX, w.iconY, NORMAL)
-    const temp = pool(3, w.tempY, NORMAL)
+    const temp = pool(3, w.tempY, NORMAL, A.NUMSM_WHITE[0])
+    const deg = img(A.DEGREE.src, w.degX, w.degY, NORMAL)
+    vis(deg, false)
     const data = safe(() => hmSensor.createSensor(hmSensor.id.WEATHER).getForecastWeather(), null)
     const today = data && data.forecastData && data.forecastData.data && data.forecastData.data[0]
     if (today) {
       setp(icon, { src: A.WX[lookup(today.index).icon] || A.WX.cloudy })
-      showNum(temp, A.NUMSM_WHITE, Math.round(today.high), w.tempY, w.tempCx)
+      showNum(temp, A.NUMSM_WHITE, A.NUMSM.w, Math.round(today.high), w.tempY, w.tempCx)
+      vis(deg, true)
     }
   },
 
   // ---- metrics: steps (white) | [heart] hr (red) -----------------------
   buildMetrics() {
     const m = L.METRICS
-    const stepsP = pool(6, m.numY, NORMAL)
+    const stepsP = pool(6, m.numY, NORMAL, A.NUMXS_WHITE[0])
     const ss = safe(() => hmSensor.createSensor(hmSensor.id.STEP))
-    const showSteps = () => showNum(stepsP, A.NUMSM_WHITE, safe(() => ss.current, 0) || 0, m.numY, m.steps.centerX)
+    const showSteps = () => showNum(stepsP, A.NUMXS_WHITE, A.NUMXS.w, safe(() => ss.current, 0) || 0, m.numY, m.steps.centerX)
     showSteps()
     safe(() => ss.addEventListener(hmSensor.event.CHANGE, showSteps))
 
-    img(A.ICON_SRC.heart, m.hr.iconX, m.iconY, NORMAL)
-    const hrP = pool(3, m.numY, NORMAL)
+    img(A.ICON_SRC.heartSm, m.hr.iconX, m.hr.iconY, NORMAL)
+    const hrP = pool(3, m.numY, NORMAL, A.NUMXS_RED[0])
     this.hs = safe(() => hmSensor.createSensor(hmSensor.id.HEART))
-    const showHr = () => showNum(hrP, A.NUMSM_RED, safe(() => this.hs.last, 0) || safe(() => this.hs.current, 0) || 0, m.numY, undefined, m.hr.numX)
+    const showHr = () => showNum(hrP, A.NUMXS_RED, A.NUMXS.w, safe(() => this.hs.last, 0) || safe(() => this.hs.current, 0) || 0, m.numY, undefined, m.hr.numX)
     showHr()
     safe(() => this.hs.addEventListener(hmSensor.event.LAST, showHr))
     safe(() => this.hs.addEventListener(hmSensor.event.CURRENT, showHr))
@@ -135,15 +135,15 @@ WatchFace({
     const hr = safe(() => this.hs.last, 0) || safe(() => this.hs.current, 0) || 0
     const arr = recordHR(dayIndex, hr)
 
-    img(A.ICON_SRC.heartSm, g.rhr.iconX, g.iconY, NORMAL)
+    img(A.ICON_SRC.heartSm, g.rhr.iconX, g.rhr.iconY, NORMAL)
     this.drawGraph(g, g.rhr, arr.map((e) => e.min))
 
-    img(A.ICON_SRC.pulse, g.hrv.iconX, g.iconY, NORMAL)
+    img(A.ICON_SRC.pulse, g.hrv.iconX, g.hrv.iconY, NORMAL)
     this.drawGraph(g, g.hrv, arr.map((e) => Math.max(1, e.max - e.min)))
   },
 
   drawGraph(g, spec, vals) {
-    hmUI.createWidget(hmUI.widget.FILL_RECT, { x: spec.startX, y: g.baseY, w: g.w, h: 2, color: C_MUTED, show_level: NORMAL })
+    hmUI.createWidget(hmUI.widget.FILL_RECT, { x: spec.barsX, y: g.baseY, w: g.w, h: 2, color: C_MUTED, show_level: NORMAL })
     if (!vals || !vals.length) return
     const lo = Math.min.apply(null, vals) - 4
     const span = Math.max(1, Math.max.apply(null, vals) + 4 - lo)
@@ -152,7 +152,7 @@ WatchFace({
       const slot = newest - (vals.length - 1 - i)
       const h = Math.max(3, Math.round((g.maxH * (v - lo)) / span))
       hmUI.createWidget(hmUI.widget.FILL_RECT, {
-        x: spec.startX + slot * (g.barW + g.gap), y: g.baseY - h, w: g.barW, h, radius: 1,
+        x: spec.barsX + slot * (g.barW + g.gap), y: g.baseY - h, w: g.barW, h, radius: 1,
         color: i === vals.length - 1 ? C_RED : C_WHITE, show_level: NORMAL,
       })
     })

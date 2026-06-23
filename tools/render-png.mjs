@@ -65,11 +65,11 @@ function placeNumLeft(cv, str, fontArr, x, y, digitW, hspace = 2) {
 }
 
 function drawGraph(cv, g, spec, vals) {
-  rect(cv, spec.startX, g.baseY, g.w, 2, MUTED)
+  rect(cv, spec.barsX, g.baseY, g.w, 2, MUTED)
   const lo = Math.min(...vals) - 4, span = Math.max(1, Math.max(...vals) + 4 - lo)
   vals.forEach((v, i) => {
     const h = Math.max(3, Math.round((g.maxH * (v - lo)) / span))
-    rect(cv, spec.startX + i * (g.barW + g.gap), g.baseY - h, g.barW, h, i === vals.length - 1 ? RED : WHITE)
+    rect(cv, spec.barsX + i * (g.barW + g.gap), g.baseY - h, g.barW, h, i === vals.length - 1 ? RED : WHITE)
   })
 }
 
@@ -85,23 +85,23 @@ function render(aod) {
 
   const d = L.DATE
   blit(cv, A.WEEKDAY[6], d.weekdayX, d.weekdayY) // SUN (sample)
-  blit(cv, A.MONTH[5], d.monthX, d.monthY)       // JUN
   placeNum(cv, '22', A.NUMSM_WHITE, d.ddCx, d.ddY, A.NUMSM.w)
   if (aod) return cv
 
   const w = L.WEATHER
   blit(cv, A.WX[SAMPLE.weatherIcon], w.iconX, w.iconY)
   placeNum(cv, String(SAMPLE.tempHigh), A.NUMSM_WHITE, w.tempCx, w.tempY, A.NUMSM.w)
+  blit(cv, A.DEGREE.src, w.degX, w.degY)
 
   const m = L.METRICS
-  placeNum(cv, String(SAMPLE.steps), A.NUMSM_WHITE, m.steps.centerX, m.numY, A.NUMSM.w)
-  blit(cv, A.ICON_SRC.heart, m.hr.iconX, m.iconY)
-  placeNumLeft(cv, String(SAMPLE.hr), A.NUMSM_RED, m.hr.numX, m.numY, A.NUMSM.w)
+  placeNum(cv, String(SAMPLE.steps), A.NUMXS_WHITE, m.steps.centerX, m.numY, A.NUMXS.w)
+  blit(cv, A.ICON_SRC.heartSm, m.hr.iconX, m.hr.iconY)
+  placeNumLeft(cv, String(SAMPLE.hr), A.NUMXS_RED, m.hr.numX, m.numY, A.NUMXS.w)
 
   const g = L.GRAPHS
-  blit(cv, A.ICON_SRC.heartSm, g.rhr.iconX, g.iconY)
+  blit(cv, A.ICON_SRC.heartSm, g.rhr.iconX, g.rhr.iconY)
   drawGraph(cv, g, g.rhr, SAMPLE.rhr)
-  blit(cv, A.ICON_SRC.pulse, g.hrv.iconX, g.iconY)
+  blit(cv, A.ICON_SRC.pulse, g.hrv.iconX, g.hrv.iconY)
   drawGraph(cv, g, g.hrv, SAMPLE.hrv)
   return cv
 }

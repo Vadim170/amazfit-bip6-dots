@@ -72,13 +72,15 @@ const renderText = (str, opts) => drawMatrix(textMatrix(str), opts)
 const renderGlyph = (ch, opts) => drawMatrix(GLYPHS[ch] || GLYPHS[' '], opts)
 
 // ---- geometry --------------------------------------------------------------
-const PITCH_TIME = 14   // big HH:MM digits -> 70 x 98
-const PITCH_NUMSM = 5   // small metric/date digits -> 25 x 35
-const PITCH_WORD = 6    // weekday / month words
+const PITCH_TIME = 17   // big HH:MM digits, edge to edge -> 85 x 119
+const PITCH_NUMSM = 5   // date / temperature digits -> 25 x 35
+const PITCH_NUMXS = 4   // small metric digits (steps/HR) -> 20 x 28
+const PITCH_WORD = 6    // weekday word
 const PITCH_ICON = 4    // pictograms (11x11 -> 44, 9x9 -> 36)
 
 const TIME_W = 5 * PITCH_TIME, TIME_H = 7 * PITCH_TIME
 const NUMSM_W = 5 * PITCH_NUMSM, NUMSM_H = 7 * PITCH_NUMSM
+const NUMXS_W = 5 * PITCH_NUMXS, NUMXS_H = 7 * PITCH_NUMXS
 const WORD_H = 7 * PITCH_WORD
 const WORD_W = 3 * 5 * PITCH_WORD + 2 * PITCH_WORD // 3 glyphs + 2 inter-letter gaps
 const COLON_W = 2 * PITCH_TIME
@@ -98,6 +100,14 @@ for (let d = 0; d <= 9; d++) {
   numWhite.push(save(renderGlyph(String(d), { pitch: PITCH_NUMSM, color: WHITE }), `num/w${d}.png`))
   numRed.push(save(renderGlyph(String(d), { pitch: PITCH_NUMSM, color: RED }), `num/r${d}.png`))
 }
+
+const numXsWhite = [], numXsRed = []
+for (let d = 0; d <= 9; d++) {
+  numXsWhite.push(save(renderGlyph(String(d), { pitch: PITCH_NUMXS, color: WHITE }), `numxs/w${d}.png`))
+  numXsRed.push(save(renderGlyph(String(d), { pitch: PITCH_NUMXS, color: RED }), `numxs/r${d}.png`))
+}
+
+const degree = save(renderGlyph('°', { pitch: PITCH_NUMSM, color: WHITE, canvasW: 16 }), 'num/deg.png')
 
 const colon = save(renderGlyph(':', { pitch: PITCH_TIME, color: RED, canvasW: COLON_W }), 'colon.png')
 
@@ -152,6 +162,11 @@ export const COLON = { w: ${COLON_W}, h: ${TIME_H}, src: '${colon}' }
 export const NUMSM = { w: ${NUMSM_W}, h: ${NUMSM_H} }
 export const NUMSM_WHITE = ${JSON.stringify(numWhite)}
 export const NUMSM_RED = ${JSON.stringify(numRed)}
+export const DEGREE = { src: '${degree}', w: 16, h: ${NUMSM_H} }
+
+export const NUMXS = { w: ${NUMXS_W}, h: ${NUMXS_H} }
+export const NUMXS_WHITE = ${JSON.stringify(numXsWhite)}
+export const NUMXS_RED = ${JSON.stringify(numXsRed)}
 
 export const WORD = { w: ${WORD_W}, h: ${WORD_H} }
 export const WEEKDAY = ${JSON.stringify(weekday)}
