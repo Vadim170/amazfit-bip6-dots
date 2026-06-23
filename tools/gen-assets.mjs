@@ -81,18 +81,22 @@ function trim(rows) {
   return out
 }
 
-// rounded (Archimedean) spiral snapped to a grid, so it's drawn with the same
-// dots as the font. ~`turns` windings; `t0` offsets the start so the centre
-// isn't a cluster.
-function spiralMatrix(size, turns, t0) {
+// rounded spiral as SEPARATE grid dots (sparse — one dot every `gap` cells of
+// travel, like the font's dots). Radius grows exponentially with the winding so
+// it narrows quickly toward the centre. `turns` windings.
+function spiralMatrix(size, turns, gap) {
   const g = Array.from({ length: size }, () => Array(size).fill('.'))
   const cx = (size - 1) / 2, cy = (size - 1) / 2
-  const tMax = turns * 2 * Math.PI
-  const b = ((size - 1) / 2) / (tMax + t0)
-  for (let t = 0; t <= tMax; t += 0.01) {
-    const r = b * (t + t0)
-    const x = Math.round(cx + r * Math.cos(t)), y = Math.round(cy + r * Math.sin(t))
-    if (x >= 0 && y >= 0 && x < size && y < size) g[y][x] = '#'
+  const tMax = turns * 2 * Math.PI, maxR = (size - 1) / 2, k = 2.2
+  let lx = null, ly = null
+  for (let t = 0; t <= tMax; t += 0.005) {
+    const r = maxR * (Math.exp(k * (t / tMax)) - 1) / (Math.exp(k) - 1)
+    const x = cx + r * Math.cos(t), y = cy + r * Math.sin(t)
+    if (lx === null || Math.hypot(x - lx, y - ly) >= gap) {
+      const gx = Math.round(x), gy = Math.round(y)
+      if (gx >= 0 && gy >= 0 && gx < size && gy < size) g[gy][gx] = '#'
+      lx = x; ly = y
+    }
   }
   return trim(g.map((row) => row.join('')))
 }
@@ -152,7 +156,7 @@ const WX_W = WX.clear[0].length * PITCH_ICON, WX_H = WX.clear.length * PITCH_ICO
 const icon = {
   heart: save(drawMatrix(HEART, { pitch: PITCH_ICON, color: RED }), 'icon/heart.png'),
   heartSm: save(drawMatrix(HEART, { pitch: 3, color: RED }), 'icon/heart_sm.png'),
-  spiral: save(drawMatrix(spiralMatrix(13, 1.25, 1.4), { pitch: 3, color: WHITE }), 'icon/spiral.png'),
+  spiral: save(drawMatrix(spiralMatrix(15, 2.2, 2.2), { pitch: 3, color: WHITE }), 'icon/spiral.png'),
 }
 const ICON9_W = 9 * PITCH_ICON // 9x9 grid icons -> 36
 
