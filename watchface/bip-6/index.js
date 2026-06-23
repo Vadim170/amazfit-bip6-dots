@@ -138,7 +138,7 @@ WatchFace({
     img(A.ICON_SRC.heartSm, g.rhr.iconX, g.rhr.iconY, NORMAL)
     this.drawGraph(g, g.rhr, arr.map((e) => e.min))
 
-    img(A.ICON_SRC.pulse, g.hrv.iconX, g.hrv.iconY, NORMAL)
+    img(A.ICON_SRC.spiral, g.hrv.iconX, g.hrv.iconY, NORMAL)
     this.drawGraph(g, g.hrv, arr.map((e) => Math.max(1, e.max - e.min)))
   },
 

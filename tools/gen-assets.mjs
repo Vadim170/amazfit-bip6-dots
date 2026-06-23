@@ -10,7 +10,7 @@ import { mkdirSync, writeFileSync, rmSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { GLYPHS } from './font5x7.mjs'
-import { WX, HEART, PULSE } from './icons.mjs'
+import { WX, HEART } from './icons.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const IMG_DIR = join(ROOT, 'assets', 'bip-6', 'images')
@@ -71,6 +71,20 @@ function drawMatrix(matrix, { pitch, color, canvasW, canvasH, rf = 0.4 }) {
 const renderText = (str, opts) => drawMatrix(textMatrix(str), opts)
 const renderGlyph = (ch, opts) => drawMatrix(GLYPHS[ch] || GLYPHS[' '], opts)
 
+// dotted Archimedean spiral (evenly-spaced dots winding outward)
+function drawSpiral(size, color, { turns = 2.75, dotR = 2.2, gap = 5 } = {}) {
+  const cv = canvas(size, size)
+  const cx = size / 2, cy = size / 2, maxR = size / 2 - dotR - 0.5
+  const tMax = turns * 2 * Math.PI
+  let lx = null, ly = null
+  for (let t = 0; t <= tMax; t += 0.02) {
+    const r = maxR * (t / tMax)
+    const x = cx + r * Math.cos(t), y = cy + r * Math.sin(t)
+    if (lx === null || Math.hypot(x - lx, y - ly) >= gap) { dot(cv, x, y, dotR, color); lx = x; ly = y }
+  }
+  return cv
+}
+
 // ---- geometry --------------------------------------------------------------
 const PITCH_TIME = 16   // big HH:MM digits, edge to edge -> 80 x 112
 const PITCH_NUMSM = 5   // date / temperature digits -> 25 x 35
@@ -123,10 +137,11 @@ const wx = {}
 for (const [name, grid] of Object.entries(WX)) wx[name] = save(drawMatrix(grid, { pitch: PITCH_ICON, color: WHITE }), `wx/${name}.png`)
 const WX_W = WX.clear[0].length * PITCH_ICON, WX_H = WX.clear.length * PITCH_ICON
 
+const SPIRAL_SIZE = 34
 const icon = {
   heart: save(drawMatrix(HEART, { pitch: PITCH_ICON, color: RED }), 'icon/heart.png'),
   heartSm: save(drawMatrix(HEART, { pitch: 3, color: RED }), 'icon/heart_sm.png'),
-  pulse: save(drawMatrix(PULSE, { pitch: 3, color: MUTED }), 'icon/pulse.png'),
+  spiral: save(drawSpiral(SPIRAL_SIZE, WHITE), 'icon/spiral.png'),
 }
 const ICON9_W = 9 * PITCH_ICON // 9x9 grid icons -> 36
 

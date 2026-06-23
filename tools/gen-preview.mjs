@@ -84,7 +84,7 @@ function render() {
   numLeft(String(SAMPLE.hr), A.NUMXS_RED, m.hr.numX, m.numY, A.NUMXS.w);
   const g = L.GRAPHS;
   place(A.ICON_SRC.heartSm, g.rhr.iconX, g.rhr.iconY); graph(g, g.rhr, SAMPLE.rhr);
-  place(A.ICON_SRC.pulse, g.hrv.iconX, g.hrv.iconY); graph(g, g.hrv, SAMPLE.hrv);
+  place(A.ICON_SRC.spiral, g.hrv.iconX, g.hrv.iconY); graph(g, g.hrv, SAMPLE.hrv);
 }
 document.getElementById('toggle').onclick = () => { aod = !aod; render(); };
 render(); setInterval(render, 5000);

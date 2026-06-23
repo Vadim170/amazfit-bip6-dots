@@ -101,7 +101,7 @@ function render(aod) {
   const g = L.GRAPHS
   blit(cv, A.ICON_SRC.heartSm, g.rhr.iconX, g.rhr.iconY)
   drawGraph(cv, g, g.rhr, SAMPLE.rhr)
-  blit(cv, A.ICON_SRC.pulse, g.hrv.iconX, g.hrv.iconY)
+  blit(cv, A.ICON_SRC.spiral, g.hrv.iconX, g.hrv.iconY)
   drawGraph(cv, g, g.hrv, SAMPLE.hrv)
   return cv
 }

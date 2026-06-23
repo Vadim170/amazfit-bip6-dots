@@ -33,6 +33,6 @@ export const ICON = { w9: 36 }
 export const ICON_SRC = {
   "heart": "images/icon/heart.png",
   "heartSm": "images/icon/heart_sm.png",
-  "pulse": "images/icon/pulse.png"
+  "spiral": "images/icon/spiral.png"
 }
 export const PREVIEW = 'images/preview.png'
