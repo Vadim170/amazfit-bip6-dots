@@ -156,7 +156,7 @@ const WX_W = WX.clear[0].length * PITCH_ICON, WX_H = WX.clear.length * PITCH_ICO
 const icon = {
   heart: save(drawMatrix(HEART, { pitch: PITCH_ICON, color: RED }), 'icon/heart.png'),
   heartSm: save(drawMatrix(HEART, { pitch: 3, color: RED }), 'icon/heart_sm.png'),
-  spiral: save(drawMatrix(spiralMatrix(15, 2.2, 2.2), { pitch: 3, color: WHITE }), 'icon/spiral.png'),
+  spiral: save(drawMatrix(spiralMatrix(15, 2.2, 1.4), { pitch: 3, color: WHITE }), 'icon/spiral.png'),
 }
 const ICON9_W = 9 * PITCH_ICON // 9x9 grid icons -> 36
 
