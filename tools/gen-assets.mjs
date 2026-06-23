@@ -71,18 +71,30 @@ function drawMatrix(matrix, { pitch, color, canvasW, canvasH, rf = 0.4 }) {
 const renderText = (str, opts) => drawMatrix(textMatrix(str), opts)
 const renderGlyph = (ch, opts) => drawMatrix(GLYPHS[ch] || GLYPHS[' '], opts)
 
-// dotted Archimedean spiral (evenly-spaced dots winding outward)
-function drawSpiral(size, color, { turns = 2.75, dotR = 2.2, gap = 5 } = {}) {
-  const cv = canvas(size, size)
-  const cx = size / 2, cy = size / 2, maxR = size / 2 - dotR - 0.5
+// crop a '#'/'.' matrix to its bounding box
+function trim(rows) {
+  let top = rows.length, bot = -1, left = rows[0].length, right = -1
+  rows.forEach((row, y) => { for (let x = 0; x < row.length; x++) if (row[x] === '#') { top = Math.min(top, y); bot = Math.max(bot, y); left = Math.min(left, x); right = Math.max(right, x) } })
+  if (bot < 0) return rows
+  const out = []
+  for (let y = top; y <= bot; y++) out.push(rows[y].slice(left, right + 1))
+  return out
+}
+
+// rounded (Archimedean) spiral snapped to a grid, so it's drawn with the same
+// dots as the font. ~`turns` windings; `t0` offsets the start so the centre
+// isn't a cluster.
+function spiralMatrix(size, turns, t0) {
+  const g = Array.from({ length: size }, () => Array(size).fill('.'))
+  const cx = (size - 1) / 2, cy = (size - 1) / 2
   const tMax = turns * 2 * Math.PI
-  let lx = null, ly = null
-  for (let t = 0; t <= tMax; t += 0.02) {
-    const r = maxR * (t / tMax)
-    const x = cx + r * Math.cos(t), y = cy + r * Math.sin(t)
-    if (lx === null || Math.hypot(x - lx, y - ly) >= gap) { dot(cv, x, y, dotR, color); lx = x; ly = y }
+  const b = ((size - 1) / 2) / (tMax + t0)
+  for (let t = 0; t <= tMax; t += 0.01) {
+    const r = b * (t + t0)
+    const x = Math.round(cx + r * Math.cos(t)), y = Math.round(cy + r * Math.sin(t))
+    if (x >= 0 && y >= 0 && x < size && y < size) g[y][x] = '#'
   }
-  return cv
+  return trim(g.map((row) => row.join('')))
 }
 
 // ---- geometry --------------------------------------------------------------
@@ -137,11 +149,10 @@ const wx = {}
 for (const [name, grid] of Object.entries(WX)) wx[name] = save(drawMatrix(grid, { pitch: PITCH_ICON, color: WHITE }), `wx/${name}.png`)
 const WX_W = WX.clear[0].length * PITCH_ICON, WX_H = WX.clear.length * PITCH_ICON
 
-const SPIRAL_SIZE = 34
 const icon = {
   heart: save(drawMatrix(HEART, { pitch: PITCH_ICON, color: RED }), 'icon/heart.png'),
   heartSm: save(drawMatrix(HEART, { pitch: 3, color: RED }), 'icon/heart_sm.png'),
-  spiral: save(drawSpiral(SPIRAL_SIZE, WHITE), 'icon/spiral.png'),
+  spiral: save(drawMatrix(spiralMatrix(13, 1.25, 1.4), { pitch: 3, color: WHITE }), 'icon/spiral.png'),
 }
 const ICON9_W = 9 * PITCH_ICON // 9x9 grid icons -> 36
 
