@@ -102,8 +102,8 @@ WatchFace({
   buildDate() {
     const d = L.DATE
     const ts = safe(() => hmSensor.createSensor(hmSensor.id.TIME))
-    const week = safe(() => ts.week, 1)      // legacy: 1=Sun..7=Sat
-    const wd = (week + 5) % 7                 // -> 0=Mon..6=Sun
+    const week = safe(() => ts.week, 1)      // legacy: 1=Mon..7=Sun (confirmed on device)
+    const wd = (week + 6) % 7                 // -> 0=Mon..6=Sun
     const day = safe(() => ts.day, 1)
     img(A.WEEKDAY[wd], d.weekdayX, d.weekdayY, BOTH)
     const dd = pool(2, d.ddY, BOTH, A.NUMWD_WHITE[0])
