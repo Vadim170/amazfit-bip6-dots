@@ -39,22 +39,39 @@ function showNum(slots, font, dw, value, y, cx, x, minusSrc) {
   }
 }
 
-// --- self-persisted 7-day daily HR store (hmFS SysPro key-value) ---------
-function loadSeries(key) {
-  return safe(() => { const s = hmFS.SysProGetChars(key); return s ? JSON.parse(s) : [] }, [])
+// --- self-persisted 7-day daily HR store --------------------------------
+// Persisted to a real FILE (hmFS.open/write/read). NB: hmFS.SysProSetChars is
+// NOT durable — the docs say it's cleared on reboot, so history vanished daily.
+const HIST_FILE = 'dots_hr7.json'
+function str2ab(s) { const b = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) b[i] = s.charCodeAt(i) & 0xff; return b }
+function ab2str(u8) { let s = ''; for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]); return s }
+function loadSeries() {
+  return safe(() => {
+    const [st, err] = hmFS.stat(HIST_FILE)
+    if (err !== 0 || !st || !st.size) return []
+    const u8 = new Uint8Array(st.size)
+    const fd = hmFS.open(HIST_FILE, hmFS.O_RDONLY)
+    hmFS.seek(fd, 0, hmFS.SEEK_SET); hmFS.read(fd, u8.buffer, 0, st.size); hmFS.close(fd)
+    const arr = JSON.parse(ab2str(u8))
+    return Array.isArray(arr) ? arr : []
+  }, [])
 }
-function saveSeries(key, arr) { safe(() => hmFS.SysProSetChars(key, JSON.stringify(arr))) }
+function saveSeries(arr) {
+  safe(() => {
+    const u8 = str2ab(JSON.stringify(arr))
+    const fd = hmFS.open(HIST_FILE, hmFS.O_RDWR | hmFS.O_CREAT | hmFS.O_TRUNC)
+    hmFS.seek(fd, 0, hmFS.SEEK_SET); hmFS.write(fd, u8.buffer, 0, u8.length); hmFS.close(fd)
+  })
+}
 function recordHR(dayIndex, hr) {
-  const key = 'dots_hr7'
-  let arr = loadSeries(key)
-  if (!Array.isArray(arr)) arr = []
+  let arr = loadSeries()
   if (hr && hr > 0) {
     let e = arr.find((d) => d.day === dayIndex)
     if (!e) { e = { day: dayIndex, min: hr, max: hr }; arr.push(e) }
     else { e.min = Math.min(e.min, hr); e.max = Math.max(e.max, hr) }
     arr.sort((a, b) => a.day - b.day)
     if (arr.length > 7) arr = arr.slice(arr.length - 7)
-    saveSeries(key, arr)
+    saveSeries(arr)
   }
   return arr
 }
