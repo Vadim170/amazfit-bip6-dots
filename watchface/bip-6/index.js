@@ -128,14 +128,16 @@ WatchFace({
     safe(() => hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, { resume_call: () => this.tick() }))
   },
 
-  // ---- big HH:MM (always 24h) + red colon ------------------------------
-  // IMG_TIME follows the system 12/24h setting (no force-24h flag), so we render
-  // the hour digits ourselves from hmSensor TIME `.hour` (raw 0-23, unlike
-  // `.format_hour` which is system-formatted 1-12). show_level BOTH => identical
-  // in normal and AOD; refreshed from tick().
+  // ---- big HH:MM via IMG_TIME (OS-driven) + red colon ------------------
+  // IMG_TIME follows the watch's own 12/24h setting and updates itself (incl. in
+  // AOD) without JS — set 24h in the watch settings to get 24h.
   buildTime() {
     const t = L.TIME
-    this.timeSlots = [t.h1, t.h2, t.m1, t.m2].map((x) => img(A.TIME_DIGITS[0], x, t.y, BOTH))
+    hmUI.createWidget(hmUI.widget.IMG_TIME, {
+      hour_zero: 1, hour_startX: t.h1, hour_startY: t.y, hour_array: A.TIME_DIGITS, hour_space: t.h2 - t.h1 - t.digitW,
+      minute_zero: 1, minute_startX: t.m1, minute_startY: t.y, minute_array: A.TIME_DIGITS, minute_space: t.m2 - t.m1 - t.digitW,
+      show_level: BOTH,
+    })
     img(A.COLON.src, t.colon, t.y, BOTH)
   },
 
@@ -146,15 +148,12 @@ WatchFace({
     this.dd = pool(2, d.ddY, BOTH, A.NUMWD_WHITE[0])
   },
 
-  // refresh time + date from the shared sensor — one path for both scenes,
-  // so the persistent normal screen can't go stale while AOD looks correct
+  // refresh the DATE from the shared sensor — one path for both scenes, so the
+  // persistent normal screen can't go stale while AOD looks correct. (Time is
+  // IMG_TIME / OS-driven, so it isn't touched here.)
   tick() {
     const ts = this.ts
     if (!ts) return
-    const h = safe(() => ts.hour, 0) || 0      // raw 24h hour 0-23
-    const m = safe(() => ts.minute, 0) || 0
-    const td = [Math.floor(h / 10), h % 10, Math.floor(m / 10), m % 10]
-    if (this.timeSlots) for (let i = 0; i < 4; i++) setp(this.timeSlots[i], { src: A.TIME_DIGITS[td[i]] })
     const wd = (safe(() => ts.week, 1) + 6) % 7 // legacy week 1=Mon..7=Sun -> 0=Mon..6=Sun
     if (this.wdImg) setp(this.wdImg, { src: A.WEEKDAY[wd] })
     if (this.dd) showNum(this.dd, A.NUMWD_WHITE, A.NUMWD.w, safe(() => ts.day, 1), L.DATE.ddY, L.DATE.ddCx)
