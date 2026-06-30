@@ -30,10 +30,12 @@ access, so it relies on the forecast the Zepp phone app syncs over Bluetooth.
 The provider and refresh rate are the phone's to decide, not ours — a source
 like a specific weather API can't be wired in from a watch face.
 
-**Weather condition codes aren't officially documented.** The mapping from the
-synced condition code to an icon (and the "will it rain" flag) lives in one
-small file (`weather-codes.js`) and is easy to adjust if a code looks off on a
-real device.
+**Weather condition codes follow the Zepp OS table.** The mapping from the
+synced condition code (`index`) to an icon (and the "will it rain" flag) lives
+in one small file (`weather-codes.js`) and matches the [Zepp OS Weather sensor
+docs](https://docs.zepp.com/docs/reference/device-app-api/newAPI/sensor/Weather/).
+Note the non-obvious ordering — `0` is *Cloudy*, not sunny; sunny is `3`. Easy
+to adjust if a code still looks off on a real device.
 
 ## Energy efficiency
 

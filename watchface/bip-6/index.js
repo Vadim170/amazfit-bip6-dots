@@ -119,13 +119,15 @@ WatchFace({
     safe(() => this.buildMetrics())
     safe(() => this.buildGraphs())
 
-    this.tick() // initial fill of time + date
-    // One refresh path for time AND date so normal and AOD never diverge:
-    // every minute, on day rollover, and when the persistent normal scene
-    // regains focus (exit AOD / wrist raise).
+    this.tick()          // initial fill of the date
+    this.refreshGraphs() // initial paint of the bars
+    // Date refresh keeps normal/AOD in sync — cheap, runs every minute and on day
+    // rollover. Graphs change only ~once a day, so they refresh only on day
+    // rollover and when the normal scene regains focus (exit AOD / wrist raise) —
+    // i.e. exactly when the user looks — not on the per-minute tick.
     safe(() => this.ts.addEventListener(this.ts.event.MINUTEEND, () => this.tick()))
-    safe(() => this.ts.addEventListener(this.ts.event.DAYCHANGE, () => this.tick()))
-    safe(() => hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, { resume_call: () => this.tick() }))
+    safe(() => this.ts.addEventListener(this.ts.event.DAYCHANGE, () => { this.tick(); this.refreshGraphs() }))
+    safe(() => hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, { resume_call: () => { this.tick(); this.refreshGraphs() } }))
   },
 
   // ---- big HH:MM via IMG_TIME (OS-driven) + red colon ------------------
@@ -150,13 +152,33 @@ WatchFace({
 
   // refresh the DATE from the shared sensor — one path for both scenes, so the
   // persistent normal screen can't go stale while AOD looks correct. (Time is
-  // IMG_TIME / OS-driven, so it isn't touched here.)
+  // IMG_TIME / OS-driven, so it isn't touched here.) Cheap enough to run every
+  // minute; the graphs do NOT ride this path (see refreshGraphs).
   tick() {
     const ts = this.ts
     if (!ts) return
     const wd = (safe(() => ts.week, 1) + 6) % 7 // legacy week 1=Mon..7=Sun -> 0=Mon..6=Sun
     if (this.wdImg) setp(this.wdImg, { src: A.WEEKDAY[wd] })
     if (this.dd) showNum(this.dd, A.NUMWD_WHITE, A.NUMWD.w, safe(() => ts.day, 1), L.DATE.ddY, L.DATE.ddCx)
+  },
+
+  // Repaint the bars from the latest data. The graph only meaningfully changes
+  // once a day (a new daily entry), so this is deliberately NOT on the per-minute
+  // tick — only when the user actually looks (resume from AOD / wrist raise) or
+  // the day rolls over. HR samples recorded while the normal scene is out of
+  // focus don't repaint the bars until then; without this they refreshed only on
+  // a full reload. The live HEART-event path (sampleHR) still updates today's bar
+  // during active wear.
+  //
+  // We don't bother diffing the data to skip the repaint: renderGraphs is pure
+  // in-memory setProperty on ~14 small FILL_RECTs (no file/flash I/O), so a "no
+  // new data" wrist raise costs next to nothing. The only real-resource touch
+  // here is sampleHR's flash read, and recordHR already skips the flash write
+  // when today's min/max didn't move.
+  refreshGraphs() {
+    // fold in any HR measured while we were away, then repaint
+    safe(() => this.sampleHR(safe(() => this.hs.last, 0) || safe(() => this.hs.current, 0) || 0))
+    safe(() => this.renderGraphs())
   },
 
   // ---- weather strip (built-in WEATHER sensor, phone-synced) -----------
